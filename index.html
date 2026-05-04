@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Chitchat+</title>
+<meta name="description" content="輕鬆學英語 Learn British English">
+<meta name="theme-color" content="#4a7a52">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chitchat+">
+<link rel="manifest" href="manifest.json">
+<!-- iOS home screen icon — must be PNG, no transparency -->
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<!-- Android / browser favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --cream: #f5f0e8;
+  --cream2: #ede6d8;
+  --cream3: #e2d9c8;
+  --white: #fdfaf5;
+  --green: #4a7a52;
+  --green2: #5c8f65;
+  --green3: #3a6142;
+  --green-pale: #d8e8da;
+  --green-mist: #eaf2eb;
+  --warm: #3a3020;
+  --muted: #7a7060;
+  --muted2: #a09880;
+  --accent: #c8825a;
+  --red: #c85a4a;
+  --shadow: 0 2px 16px rgba(58,96,66,0.10);
+  --shadow2: 0 8px 32px rgba(58,96,66,0.14);
+  --r: 18px;
+  --r2: 24px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Noto Serif TC', 'Georgia', serif;
+  background: var(--cream);
+  color: var(--warm);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--green);
+  padding: 12px 18px 10px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+.header-logo { width: 40px; height: 40px; flex-shrink: 0; }
+.header-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.3px; }
+.header-sub { font-size: 11.5px; color: rgba(255,255,255,0.80); margin-top: 1px; }
+.header-streak {
+  margin-left: auto;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+/* ── NAV ── */
+.nav {
+  background: var(--white);
+  display: flex;
+  border-bottom: 1px solid var(--cream3);
+  flex-shrink: 0;
+}
+.nav-btn {
+  flex: 1;
+  padding: 11px 4px 9px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  transition: color 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+.nav-btn .ni { font-size: 17px; display: block; margin-bottom: 2px; }
+.nav-btn.active { color: var(--green); border-bottom-color: var(--green); font-weight: 700; }
+
+/* ── SCREENS ── */
+.screens { flex: 1; overflow: hidden; position: relative; }
+.screen { position: absolute; inset: 0; overflow-y: auto; display: none; -webkit-overflow-scrolling: touch; }
+.screen.active { display: block; }
+.screen-pad { padding: 20px 16px 90px; }
+
+/* ── PAGE HEADER ── */
+.page-hd { margin-bottom: 18px; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--green3); line-height: 1.2; }
+.page-sub { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+/* ── DATE BADGE ── */
+.date-badge {
+  display: inline-block;
+  background: var(--green-pale);
+  color: var(--green3);
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+/* ── PILLS ── */
+.pills { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin-bottom: 16px; }
+.pills::-webkit-scrollbar { display: none; }
+.pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cream3);
+  background: var(--white);
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Noto Serif TC', serif;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.pill.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+/* ── SEARCH ── */
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border: 1.5px solid var(--cream3);
+  border-radius: var(--r);
+  font-size: 16px;
+  background: var(--white);
+  color: var(--warm);
+  font-family: 'Noto Serif TC', serif;
+}
+.search-input:focus { outline: none; border-color: var(--green2); }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 17px; pointer-events: none; }
+
+/* ── TODAY CARD ── */
+.today-card {
+  background: var(--white);
+  border-radius: var(--r2);
+  padding: 24px 22px 20px;
+  box-shadow: var(--shadow2);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.today-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--green);
+  border-radius: var(--r2) var(--r2) 0 0;
+}
+.today-quote-mark { font-size: 28px; color: var(--green-pale); font-family: Georgia, serif; line-height: 1; margin-bottom: 8px; }
+.today-english { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--warm); line-height: 1.25; margin-bottom: 10px; }
+.today-meaning { font-size: 17px; color: var(--warm); margin-bottom: 12px; }
+.today-example {
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+  font-size: 14.5px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+.today-tag {
+  display: inline-block;
+  border: 1.5px solid var(--cream3);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+.today-audio {
+  position: absolute;
+  top: 20px; right: 18px;
+  background: var(--green-mist);
+  border: none;
+  border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+}
+.today-audio:active { background: var(--green-pale); transform: scale(0.92); }
+
+/* ── PHRASE CARDS ── */
+.phrase-list { display: flex; flex-direction: column; gap: 12px; }
+.phrase-card {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 16px 52px 14px 18px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--green2);
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.phrase-card:active { transform: scale(0.985); }
+.phrase-card.custom-card { border-left-color: var(--accent); }
+.phrase-en { font-size: 19px; font-weight: 700; color: var(--warm); line-height: 1.3; }
+.phrase-zh { font-size: 15px; color: var(--green3); margin-top: 5px; }
+.phrase-ex { font-size: 13.5px; color: var(--muted); margin-top: 5px; font-style: italic; }
+.phrase-tag { display: inline-block; background: var(--green-mist); color: var(--green3); font-size: 11px; padding: 3px 9px; border-radius: 999px; margin-top: 7px; }
+.phrase-audio {
+  position: absolute; top: 14px; right: 12px;
+  background: none; border: none;
+  font-size: 22px; cursor: pointer; color: var(--green2);
+  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: background 0.12s;
+}
+.phrase-audio:active { background: var(--green-mist); }
+.phrase-delete {
+  position: absolute; bottom: 10px; right: 12px;
+  background: none; border: none;
+  font-size: 16px; cursor: pointer; color: var(--muted2);
+  width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: background 0.12s;
+}
+.phrase-delete:active { background: #fde8e8; }
+
+/* ── STATS ROW ── */
+.stats-row { display: flex; gap: 10px; margin-top: 4px; }
+.stat-box {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 16px 14px 14px;
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+.stat-num { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--warm); }
+.stat-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+/* ── ADD WORD BUTTON ── */
+.fab {
+  position: fixed;
+  bottom: 72px; right: 18px;
+  width: 54px; height: 54px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(74,122,82,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ── MODAL ── */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal-sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px 36px;
+  width: 100%;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
+}
+.modal-backdrop.open .modal-sheet { transform: translateY(0); }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--green3); margin-bottom: 18px; }
+.modal-field { margin-bottom: 14px; }
+.modal-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
+.modal-input, .modal-select {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1.5px solid var(--cream3);
+  border-radius: var(--r);
+  font-size: 16px;
+  font-family: 'Noto Serif TC', serif;
+  background: var(--cream);
+  color: var(--warm);
+  -webkit-appearance: none;
+}
+.modal-input:focus, .modal-select:focus { outline: none; border-color: var(--green2); background: #fff; }
+.modal-btns { display: flex; gap: 10px; margin-top: 18px; }
+.btn-cancel {
+  flex: 1; padding: 14px; border: 1.5px solid var(--cream3);
+  border-radius: var(--r); background: var(--cream);
+  font-size: 16px; color: var(--muted); cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+}
+.btn-save {
+  flex: 2; padding: 14px;
+  border: none; border-radius: var(--r);
+  background: var(--green); color: #fff;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  transition: background 0.15s;
+}
+.btn-save:active { background: var(--green3); }
+
+/* ── FLASHCARD SCREEN ── */
+.card-wrap {
+  position: relative;
+  height: 380px;
+  margin: 4px 0 12px;
+}
+.flip-card {
+  width: 100%; height: 100%;
+  position: relative;
+  cursor: pointer;
+  border-radius: var(--r2);
+}
+.card-face {
+  position: absolute; inset: 0;
+  border-radius: var(--r2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow2);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  will-change: opacity, transform;
+}
+.card-face-front { opacity: 1; transform: scale(1); pointer-events: auto; }
+.card-face-back  { opacity: 0; transform: scale(0.97); pointer-events: none; }
+.flip-card.flipped .card-face-front { opacity: 0; transform: scale(0.97); pointer-events: none; }
+.flip-card.flipped .card-face-back  { opacity: 1; transform: scale(1); pointer-events: auto; }
+.card-topbar {
+  background: var(--green);
+  padding: 11px 18px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.card-topbar-num { color: #fff; font-size: 14px; }
+.card-topbar-cat { color: rgba(255,255,255,0.78); font-size: 12px; }
+.card-body {
+  flex: 1; background: var(--white);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 28px 24px; text-align: center;
+}
+.card-label { font-size: 11px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; margin-bottom: 18px; }
+.card-word { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--warm); line-height: 1.3; margin-bottom: 10px; }
+.card-zh-text { font-size: 20px; color: var(--green3); margin-bottom: 10px; font-weight: 700; }
+.card-ex-text { font-size: 14px; color: var(--muted); font-style: italic; line-height: 1.5; }
+.card-hint { font-size: 13px; color: var(--muted2); margin-top: 20px; display: flex; align-items: center; gap: 5px; }
+.card-pill { background: var(--green-mist); color: var(--green3); font-size: 12px; padding: 5px 14px; border-radius: 999px; margin-top: 14px; }
+
+/* Swipe overlays */
+.card-overlay {
+  position: absolute; inset: 0; border-radius: var(--r2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 56px; opacity: 0; pointer-events: none;
+  transition: opacity 0.1s;
+}
+.overlay-l { background: rgba(200,90,74,0.15); }
+.overlay-r { background: rgba(74,122,82,0.15); }
+
+/* Progress dots */
+.pdots { display: flex; justify-content: center; gap: 5px; margin-bottom: 14px; flex-wrap: wrap; padding: 0 8px; }
+.pdot { width: 7px; height: 7px; border-radius: 50%; background: var(--cream3); transition: background 0.2s; }
+.pdot.done { background: var(--green); }
+.pdot.cur { background: var(--green2); width: 14px; border-radius: 4px; }
+
+/* Swipe action buttons */
+.swipe-row { display: flex; justify-content: center; gap: 20px; }
+.swipe-btn {
+  width: 62px; height: 62px; border-radius: 50%; border: none;
+  font-size: 24px; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.12s;
+}
+.swipe-btn:active { transform: scale(0.90); }
+.sb-no { background: #fef2f0; }
+.sb-audio { background: var(--green-mist); }
+.sb-yes { background: var(--green); color: #fff; }
+.swipe-count { text-align: center; color: var(--muted); font-size: 13.5px; margin-top: 11px; }
+
+/* ── REVIEW SCREEN ── */
+.review-list { display: flex; flex-direction: column; gap: 10px; }
+.review-row {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer; transition: transform 0.12s;
+}
+.review-row:active { transform: scale(0.985); }
+.review-row.custom { border-left: 3px solid var(--accent); }
+.rev-num {
+  background: var(--green-pale); color: var(--green3);
+  font-size: 12px; font-weight: 700;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.rev-body { flex: 1; }
+.rev-en { font-size: 17px; font-weight: 700; color: var(--warm); }
+.rev-zh { font-size: 15px; color: var(--green3); margin-top: 3px; }
+.rev-ex { font-size: 13px; color: var(--muted); margin-top: 3px; font-style: italic; }
+.rev-tag { font-size: 11px; color: var(--muted2); margin-top: 4px; }
+.rev-audio { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--green2); padding: 4px; border-radius: 50%; transition: background 0.12s; }
+.rev-audio:active { background: var(--green-mist); }
+
+/* ── TEST SCREEN ── */
+.score-bar {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  box-shadow: var(--shadow);
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+}
+.score-lbl { font-size: 14px; color: var(--muted); }
+.score-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--green3); }
+.q-card {
+  background: var(--white);
+  border-radius: var(--r2);
+  padding: 26px 22px 22px;
+  box-shadow: var(--shadow2);
+}
+.q-label { font-size: 11px; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; margin-bottom: 14px; text-align: center; }
+.q-text { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--warm); text-align: center; line-height: 1.3; margin-bottom: 6px; }
+.q-example { font-size: 14px; color: var(--muted); text-align: center; font-style: italic; margin-bottom: 22px; min-height: 20px; }
+.q-opts { display: flex; flex-direction: column; gap: 10px; }
+.q-opt {
+  background: var(--cream);
+  border: 1.5px solid var(--cream3);
+  border-radius: var(--r);
+  padding: 15px 18px;
+  font-size: 16px; color: var(--warm);
+  text-align: left; cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  transition: all 0.14s; width: 100%;
+}
+.q-opt:active { transform: scale(0.985); }
+.q-opt.correct { background: var(--green-mist); border-color: var(--green); color: var(--green3); }
+.q-opt.wrong { background: #fde8e8; border-color: var(--red); color: #8a2020; }
+.q-opt:disabled { cursor: default; }
+.q-result { text-align: center; font-size: 19px; font-weight: 700; margin: 16px 0 6px; min-height: 26px; }
+.q-result.ok { color: var(--green3); }
+.q-result.no { color: var(--red); }
+.q-explain { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 14px; min-height: 18px; }
+.q-next {
+  width: 100%; background: var(--green); color: #fff;
+  border: none; border-radius: var(--r); padding: 15px;
+  font-size: 17px; font-weight: 700; cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  display: none; transition: background 0.14s;
+}
+.q-next.show { display: block; }
+.q-next:active { background: var(--green3); }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 52px 20px; color: var(--muted); }
+.empty-icon { font-size: 52px; margin-bottom: 14px; }
+.empty-text { font-size: 17px; }
+
+/* ── INSTALL BANNER ── */
+.install-banner {
+  background: var(--green); color: #fff;
+  border-radius: var(--r); padding: 13px 16px;
+  margin-bottom: 18px; display: none;
+  align-items: center; gap: 12px; cursor: pointer;
+}
+.install-banner.show { display: flex; }
+.ib-text { flex: 1; font-size: 14px; }
+.ib-title { font-weight: 700; font-size: 16px; }
+.ib-close { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 2px 6px; }
+
+/* ── SCROLLBAR HIDE ── */
+.screen::-webkit-scrollbar { display: none; }
+.screen { scrollbar-width: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <svg class="header-logo" viewBox="0 0 192 192">
+    <rect width="192" height="192" rx="44" fill="#3a6142"/>
+    <rect x="28" y="30" width="136" height="96" rx="22" fill="#fff"/>
+    <polygon points="28,112 28,146 60,112" fill="#fff"/>
+    <rect x="0" y="126" width="29" height="21" fill="#3a6142"/>
+    <rect x="0" y="112" width="29" height="14" fill="#3a6142"/>
+    <circle cx="60" cy="78" r="10" fill="#3a6142"/>
+    <circle cx="90" cy="78" r="10" fill="#3a6142"/>
+    <rect x="120" y="58" width="12" height="40" rx="6" fill="#3a6142"/>
+    <rect x="107" y="72" width="38" height="12" rx="6" fill="#3a6142"/>
+  </svg>
+  <div>
+    <div class="header-title">Chitchat+</div>
+    <div class="header-sub">輕鬆學英語 Learn British English</div>
+  </div>
+  <div class="header-streak">🔥 <span id="streak-num">0</span> day</div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('today')" id="tab-today"><span class="ni">☀️</span>今日</button>
+  <button class="nav-btn" onclick="showTab('swipe')" id="tab-swipe"><span class="ni">🃏</span>滑卡</button>
+  <button class="nav-btn" onclick="showTab('review')" id="tab-review"><span class="ni">📖</span>複習</button>
+  <button class="nav-btn" onclick="showTab('test')" id="tab-test"><span class="ni">✏️</span>測驗</button>
+  <button class="nav-btn" onclick="showTab('add')" id="tab-add"><span class="ni">➕</span>新增</button>
+</nav>
+
+<!-- SCREENS -->
+<div class="screens">
+
+<!-- TODAY -->
+<div class="screen active" id="screen-today">
+<div class="screen-pad">
+  <div id="install-banner" class="install-banner" onclick="installApp()">
+    <span style="font-size:26px">📲</span>
+    <div class="ib-text"><div class="ib-title">加到主畫面！</div><div>離線使用 · 無需網絡</div></div>
+    <button class="ib-close" onclick="event.stopPropagation();this.closest('.install-banner').classList.remove('show')">✕</button>
+  </div>
+
+  <div class="date-badge" id="today-date"></div>
+  <div class="page-hd">
+    <div class="page-title">今日短句</div>
+    <div class="page-sub">Today's phrase</div>
+  </div>
+
+  <div class="today-card" id="today-card">
+    <button class="today-audio" onclick="speakToday()" id="today-audio-btn">🔊</button>
+    <div class="today-quote-mark">"</div>
+    <div class="today-english" id="tc-en">—</div>
+    <div class="today-meaning" id="tc-zh">—</div>
+    <div class="today-example" id="tc-ex"></div>
+    <span class="today-tag" id="tc-tag"></span>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;">
+    <button onclick="prevToday()" style="flex:1;padding:12px;border:1.5px solid var(--cream3);border-radius:var(--r);background:var(--white);font-size:15px;cursor:pointer;font-family:inherit;color:var(--muted);">← 上一則</button>
+    <button onclick="nextToday()" style="flex:1;padding:12px;border:none;border-radius:var(--r);background:var(--green);color:#fff;font-size:15px;cursor:pointer;font-family:inherit;font-weight:700;">下一則 →</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-label">In Bank</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-custom">0</div><div class="stat-label">我的新增</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-streak2">0</div><div class="stat-label">Day Streak</div></div>
+  </div>
+</div>
+</div>
+
+<!-- SWIPE -->
+<div class="screen" id="screen-swipe">
+<div class="screen-pad">
+  <div class="page-hd">
+    <div class="page-title">滑卡練習</div>
+    <div class="page-sub">點擊翻面 · 右滑記得 · 左滑再試</div>
+  </div>
+  <div class="pills" id="swipe-pills">
+    <button class="pill active" onclick="setSwipeCat('all',this)">全部</button>
+    <button class="pill" onclick="setSwipeCat('idiom',this)">慣用語</button>
+    <button class="pill" onclick="setSwipeCat('slang',this)">俚語</button>
+    <button class="pill" onclick="setSwipeCat('phrasal',this)">片語</button>
+    <button class="pill" onclick="setSwipeCat('vocab',this)">詞彙</button>
+    <button class="pill" onclick="setSwipeCat('custom',this)">我的</button>
+  </div>
+
+  <div class="card-wrap" id="card-wrap">
+    <div class="flip-card" id="flip-card" onclick="flipCard()">
+      <div class="card-face card-face-front">
+        <div class="card-topbar">
+          <span class="card-topbar-num" id="fc-counter">1 / 1</span>
+          <span class="card-topbar-cat" id="fc-cat">慣用語</span>
+        </div>
+        <div class="card-body">
+          <div class="card-label">ENGLISH</div>
+          <div class="card-word" id="fc-en">—</div>
+          <div class="card-hint">👆 點擊查看中文</div>
+        </div>
+      </div>
+      <div class="card-face card-face-back">
+        <div class="card-topbar">
+          <span class="card-topbar-num" id="fc-counter2">1 / 1</span>
+          <span class="card-topbar-cat" id="fc-cat2">慣用語</span>
+        </div>
+        <div class="card-body">
+          <div class="card-label">中文解釋</div>
+          <div class="card-zh-text" id="fc-zh">—</div>
+          <div class="card-ex-text" id="fc-ex"></div>
+          <div class="card-pill" id="fc-pill">慣用語</div>
+          <div class="card-hint">👆 點擊返回</div>
+        </div>
+      </div>
+      <div class="card-overlay overlay-l" id="ov-l">❌</div>
+      <div class="card-overlay overlay-r" id="ov-r">✅</div>
+    </div>
+  </div>
+
+  <div class="pdots" id="pdots"></div>
+  <div class="swipe-row">
+    <button class="swipe-btn sb-no" onclick="doSwipe('left')">❌</button>
+    <button class="swipe-btn sb-audio" onclick="speakCurrent()">🔊</button>
+    <button class="swipe-btn sb-yes" onclick="doSwipe('right')">✅</button>
+  </div>
+  <div class="swipe-count">已完成 <span id="sc-done">0</span> / <span id="sc-total">0</span> 張</div>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div class="screen" id="screen-review">
+<div class="screen-pad">
+  <div class="page-hd">
+    <div class="page-title">複習冊</div>
+    <div class="page-sub">所有詞彙一覽</div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="search" placeholder="搜尋詞彙 Search..." oninput="filterReview()" id="review-search">
+  </div>
+  <div class="pills" id="review-pills">
+    <button class="pill active" onclick="setReviewCat('all',this)">全部</button>
+    <button class="pill" onclick="setReviewCat('idiom',this)">慣用語</button>
+    <button class="pill" onclick="setReviewCat('slang',this)">俚語</button>
+    <button class="pill" onclick="setReviewCat('phrasal',this)">片語</button>
+    <button class="pill" onclick="setReviewCat('grammar',this)">語法</button>
+    <button class="pill" onclick="setReviewCat('vocab',this)">詞彙</button>
+    <button class="pill" onclick="setReviewCat('food',this)">食物</button>
+    <button class="pill" onclick="setReviewCat('emotion',this)">情感</button>
+    <button class="pill" onclick="setReviewCat('health',this)">健康</button>
+    <button class="pill" onclick="setReviewCat('custom',this)">我的</button>
+  </div>
+  <div class="review-list" id="review-list"></div>
+</div>
+</div>
+
+<!-- TEST -->
+<div class="screen" id="screen-test">
+<div class="screen-pad">
+  <div class="page-hd">
+    <div class="page-title">測驗</div>
+    <div class="page-sub">選擇正確的中文意思</div>
+  </div>
+  <div class="score-bar">
+    <span class="score-lbl">本次分數</span>
+    <span class="score-val"><span id="sc-ok">0</span> / <span id="sc-all">0</span></span>
+  </div>
+  <div class="q-card">
+    <div class="q-label">What does this mean?</div>
+    <div class="q-text" id="qt-word">—</div>
+    <div class="q-example" id="qt-ex"></div>
+    <div class="q-opts" id="qt-opts"></div>
+    <div class="q-result" id="qt-res"></div>
+    <div class="q-explain" id="qt-explain"></div>
+    <button class="q-next" id="qt-next" onclick="nextQ()">下一題 Next →</button>
+  </div>
+</div>
+</div>
+
+<!-- ADD -->
+<div class="screen" id="screen-add">
+<div class="screen-pad">
+  <div class="page-hd">
+    <div class="page-title">新增詞彙</div>
+    <div class="page-sub">加入你學到的新單字</div>
+  </div>
+
+  <div style="background:var(--white);border-radius:var(--r2);padding:22px 18px;box-shadow:var(--shadow2);">
+    <div class="modal-field">
+      <label class="modal-label">英文詞彙 English *</label>
+      <input class="modal-input" id="add-en" placeholder="e.g. Bob's your uncle" type="text">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">中文解釋 Chinese *</label>
+      <input class="modal-input" id="add-zh" placeholder="e.g. 事情就這麼簡單！" type="text">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">例句 Example (選填)</label>
+      <input class="modal-input" id="add-ex" placeholder="e.g. Just follow the recipe and Bob's your uncle!" type="text">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">分類 Category</label>
+      <select class="modal-select" id="add-cat">
+        <option value="custom">我的詞彙</option>
+        <option value="idiom">慣用語</option>
+        <option value="slang">俚語</option>
+        <option value="phrasal">片語</option>
+        <option value="grammar">語法</option>
+        <option value="vocab">詞彙</option>
+        <option value="food">食物</option>
+        <option value="emotion">情感</option>
+        <option value="health">健康</option>
+      </select>
+    </div>
+    <button class="btn-save" onclick="saveWord()" style="width:100%;margin-top:6px;">儲存 Save ✓</button>
+  </div>
+
+  <div style="margin-top:24px;">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green3);margin-bottom:12px;">我的詞彙 My Words (<span id="custom-count">0</span>)</div>
+    <div class="review-list" id="custom-list"></div>
+  </div>
+</div>
+</div>
+
+</div><!-- /screens -->
+
+<script>
+// ═══════════════════════════════════════════════
+// SEED DATA (permanent, never changes)
+// ═══════════════════════════════════════════════
+const SEED = [
+  {en:"Come rain or shine",zh:"風雨無阻，無論如何",example:"I'll be there, come rain or shine.",cat:"idiom"},
+  {en:"On top of the world",zh:"欣喜若狂，快樂無比",example:"She felt on top of the world after the news.",cat:"idiom"},
+  {en:"Once bitten, twice shy",zh:"一朝遭蛇咬，十年怕草繩",example:"Once bitten, twice shy — I won't trust him again.",cat:"idiom"},
+  {en:"Beat around the bush",zh:"拐彎抹角，避開主題",example:"Stop beating around the bush and tell me the truth.",cat:"idiom"},
+  {en:"Break a leg",zh:"祝你好運！（舞台表演用語）",example:"Break a leg at your audition!",cat:"idiom"},
+  {en:"Face the music",zh:"接受後果，承擔責任",example:"It's time to face the music.",cat:"idiom"},
+  {en:"Spill the beans",zh:"洩露秘密",example:"She spilled the beans about the surprise party.",cat:"idiom"},
+  {en:"Under the weather",zh:"身體欠佳，感覺不適",example:"I'm feeling a bit under the weather today.",cat:"idiom"},
+  {en:"Let sleeping dogs lie",zh:"別惹事生非，多一事不如少一事",example:"Let sleeping dogs lie — don't bring it up again.",cat:"idiom"},
+  {en:"Water under the bridge",zh:"過去的事就讓它過去吧",example:"That argument is water under the bridge now.",cat:"idiom"},
+  {en:"Actions speak louder than words",zh:"事實勝於雄辯",example:"Show me — actions speak louder than words.",cat:"idiom"},
+  {en:"Easier said than done",zh:"說來容易做來難",example:"Losing weight is easier said than done.",cat:"idiom"},
+  {en:"No pain, no gain",zh:"一分耕耘一分收穫",example:"Keep training — no pain, no gain!",cat:"idiom"},
+  {en:"Every dog has his day",zh:"凡人皆有出頭之日",example:"Don't give up. Every dog has his day.",cat:"idiom"},
+  {en:"Out of the blue",zh:"突如其來，出乎意料",example:"He called me out of the blue.",cat:"idiom"},
+  {en:"Miss the boat",zh:"錯過機會",example:"If you don't apply now, you'll miss the boat.",cat:"idiom"},
+  {en:"On the fence",zh:"舉棋不定，猶豫不決",example:"I'm still on the fence about which job to take.",cat:"idiom"},
+  {en:"Cost an arm and a leg",zh:"非常昂貴",example:"That handbag cost an arm and a leg.",cat:"idiom"},
+  {en:"Cold feet",zh:"臨陣退縮，突然害怕",example:"He got cold feet before the wedding.",cat:"idiom"},
+  {en:"Silver lining",zh:"黑暗中的一線希望",example:"Every cloud has a silver lining.",cat:"idiom"},
+  {en:"Talk is cheap",zh:"光說不練沒有用",example:"Talk is cheap — show me what you can do.",cat:"idiom"},
+  {en:"Look before you leap",zh:"三思而後行",example:"Look before you leap — research the company first.",cat:"idiom"},
+  {en:"The best is yet to come",zh:"最好的還沒到來（好戲在後頭）",example:"Keep going — the best is yet to come.",cat:"idiom"},
+  {en:"Practice makes perfect",zh:"熟能生巧",example:"Keep practising — practice makes perfect.",cat:"idiom"},
+  {en:"Nothing ventured, nothing gained",zh:"不入虎穴，焉得虎子",example:"Apply for the job! Nothing ventured, nothing gained.",cat:"idiom"},
+  {en:"When pigs fly",zh:"絕對不可能發生",example:"He'll clean his room when pigs fly.",cat:"idiom"},
+  {en:"See red",zh:"非常生氣，勃然大怒",example:"I saw red when he lied to me.",cat:"idiom"},
+  {en:"Over the moon",zh:"欣喜若狂，高興極了",example:"She was over the moon with her exam results.",cat:"idiom"},
+  {en:"Throw in the towel",zh:"認輸，放棄",example:"After months of trying, he finally threw in the towel.",cat:"idiom"},
+  {en:"On edge",zh:"緊張不安，如坐針氈",example:"She was on edge before the interview.",cat:"idiom"},
+  {en:"Seeing is believing",zh:"眼見為實",example:"I didn't believe it until I saw — seeing is believing.",cat:"idiom"},
+  {en:"Why the long face?",zh:"為何愁眉苦臉？",example:"Hey, why the long face? What happened?",cat:"idiom"},
+  {en:"Wanna (Want to)",zh:"想要",example:"I wanna go home now.",cat:"slang"},
+  {en:"Gonna (Going to)",zh:"打算，即將",example:"I'm gonna go shopping.",cat:"slang"},
+  {en:"Gotta (Got to)",zh:"必須，得要",example:"I gotta go — see you later!",cat:"slang"},
+  {en:"Chill out",zh:"冷靜點，放鬆",example:"Chill out, it's not a big deal.",cat:"slang"},
+  {en:"You killed it!",zh:"你表現得太棒了！",example:"You killed it on stage tonight!",cat:"slang"},
+  {en:"Don't sweat it",zh:"別擔心，沒事",example:"Don't sweat it — I'll sort it out.",cat:"slang"},
+  {en:"Brilliant!",zh:"太棒了！（英式常用語）",example:"That's brilliant — well done!",cat:"slang"},
+  {en:"Cheeky",zh:"厚臉皮的，調皮的",example:"You cheeky monkey!",cat:"slang"},
+  {en:"Gutted",zh:"非常失望，心碎",example:"I was gutted when my team lost.",cat:"slang"},
+  {en:"Knackered",zh:"筋疲力盡，累透了",example:"I'm absolutely knackered after work.",cat:"slang"},
+  {en:"Dodgy",zh:"可疑的，不靠譜的",example:"That shop looks a bit dodgy.",cat:"slang"},
+  {en:"Mate",zh:"朋友，老兄（英式稱呼）",example:"Alright mate, how are you?",cat:"slang"},
+  {en:"Cheers",zh:"謝謝；乾杯！（英式）",example:"Cheers for the help!",cat:"slang"},
+  {en:"Fancy",zh:"喜歡，想要",example:"Do you fancy a cup of tea?",cat:"slang"},
+  {en:"Proper",zh:"非常，真正地（強調語）",example:"That's proper good food.",cat:"slang"},
+  {en:"Banter",zh:"玩笑話，互相逗趣",example:"It was just a bit of banter.",cat:"slang"},
+  {en:"Gobsmacked",zh:"目瞪口呆，震驚",example:"I was gobsmacked by the news.",cat:"slang"},
+  {en:"Chuffed",zh:"非常高興，得意",example:"I'm chuffed to bits with my result.",cat:"slang"},
+  {en:"Bloke",zh:"男人，小伙子（英式）",example:"He's a nice bloke.",cat:"slang"},
+  {en:"Make up",zh:"和好如初；化妝",example:"They made up after arguing.",cat:"phrasal"},
+  {en:"Put off",zh:"推遲，拖延",example:"Don't put off your work until tomorrow.",cat:"phrasal"},
+  {en:"Put up with",zh:"忍受，容忍",example:"I can't put up with the noise.",cat:"phrasal"},
+  {en:"Run out of",zh:"用完，耗盡",example:"We ran out of time.",cat:"phrasal"},
+  {en:"Get over",zh:"從…恢復；克服",example:"It took months to get over the breakup.",cat:"phrasal"},
+  {en:"Come across",zh:"偶然發現；給人的印象",example:"I came across this book at the market.",cat:"phrasal"},
+  {en:"Look after",zh:"照顧，照料",example:"Can you look after my cat while I'm away?",cat:"phrasal"},
+  {en:"Give up",zh:"放棄",example:"Don't give up on your dreams.",cat:"phrasal"},
+  {en:"Pick up",zh:"接人；撿起；學會",example:"I'll pick you up at 8.",cat:"phrasal"},
+  {en:"Drop off",zh:"送人到某處；打瞌睡",example:"Can you drop me off at the station?",cat:"phrasal"},
+  {en:"Take off",zh:"脫掉；飛機起飛；迅速成功",example:"The plane takes off at noon.",cat:"phrasal"},
+  {en:"Get back",zh:"返回；得回",example:"What time did you get back?",cat:"phrasal"},
+  {en:"How about + V-ing?",zh:"…怎麼樣？（提建議）",example:"How about going for a walk?",cat:"grammar"},
+  {en:"Maybe vs May be",zh:"Maybe（副詞）放句首；May be（動詞短語）作謂語",example:"Maybe he is a teacher. / He may be a teacher.",cat:"grammar"},
+  {en:"Get off vs Get out of",zh:"Get off 用於大型交通工具；Get out of 用於私家車",example:"Get off the bus. / Get out of the taxi.",cat:"grammar"},
+  {en:"Too / Also / As well / Either",zh:"也：Too句末肯定；Also句中；As well句末；Either否定句",example:"I love tea, too. / I also love coffee.",cat:"grammar"},
+  {en:"It's up to you",zh:"由你決定",example:"You choose the restaurant — it's up to you.",cat:"grammar"},
+  {en:"I feel you",zh:"我理解你的感受",example:"I feel you — that situation was really tough.",cat:"grammar"},
+  {en:"Let me get back to you",zh:"讓我稍後再回覆你",example:"Let me get back to you on that.",cat:"grammar"},
+  {en:"I know better than to + verb",zh:"我不應該那樣做",example:"I know better than to trust him.",cat:"grammar"},
+  {en:"Bookworm",zh:"書蟲，書呆子",example:"She's a total bookworm — always reading.",cat:"vocab"},
+  {en:"Fishwife",zh:"潑婦，聒噪的女人",example:"She screamed like a fishwife.",cat:"vocab"},
+  {en:"Footloose",zh:"無拘無束，自由自在",example:"He's young and footloose.",cat:"vocab"},
+  {en:"Headstrong",zh:"固執己見，任性",example:"She's very headstrong — won't listen to advice.",cat:"vocab"},
+  {en:"Black sheep",zh:"害群之馬",example:"He was the black sheep of the family.",cat:"vocab"},
+  {en:"White elephant",zh:"昂貴而無用的東西",example:"That project turned into a white elephant.",cat:"vocab"},
+  {en:"Cold turkey",zh:"突然徹底戒掉（菸、毒等）",example:"He quit smoking cold turkey.",cat:"vocab"},
+  {en:"Procrastination",zh:"拖延症，拖延行為",example:"Procrastination is the thief of time.",cat:"vocab"},
+  {en:"Speechless",zh:"無言以對，說不出話",example:"I was speechless when I heard the news.",cat:"vocab"},
+  {en:"Napa Cabbage",zh:"大白菜",example:"Napa cabbage is great in hotpot.",cat:"food"},
+  {en:"Okra",zh:"秋葵",example:"Okra is popular in Southern cooking.",cat:"food"},
+  {en:"Coriander",zh:"香菜（芫荽）",example:"I love coriander in Thai dishes.",cat:"food"},
+  {en:"Pomelo",zh:"柚子",example:"We eat pomelo during the Mid-Autumn Festival.",cat:"food"},
+  {en:"Loquat",zh:"枇杷",example:"Loquats are sweet and juicy.",cat:"food"},
+  {en:"Durian",zh:"榴槤",example:"Durian has a very strong smell.",cat:"food"},
+  {en:"Persimmon",zh:"柿子",example:"Persimmons are sweet when fully ripe.",cat:"food"},
+  {en:"Stale",zh:"不新鮮（麵包、餅乾）",example:"This bread has gone stale.",cat:"food"},
+  {en:"Soggy",zh:"受潮變軟，濕軟",example:"The chips are all soggy.",cat:"food"},
+  {en:"Spoiled / Rotten",zh:"變質 / 腐爛",example:"The milk has spoiled — throw it away.",cat:"food"},
+  {en:"Vertigo",zh:"眩暈（耳水不平衡）",example:"The height gave me vertigo.",cat:"health"},
+  {en:"Insomnia",zh:"失眠",example:"Stress can cause insomnia.",cat:"health"},
+  {en:"Sprain",zh:"扭傷",example:"I sprained my ankle playing football.",cat:"health"},
+  {en:"Fracture",zh:"骨折",example:"He has a fracture in his wrist.",cat:"health"},
+  {en:"Heatstroke",zh:"中暑",example:"Drink water to avoid heatstroke.",cat:"health"},
+  {en:"Bruise",zh:"瘀青，挫傷",example:"She had a bruise on her arm.",cat:"health"},
+  {en:"Dermatology",zh:"皮膚科",example:"She saw a specialist in dermatology.",cat:"health"},
+  {en:"Allergy",zh:"過敏",example:"He has a peanut allergy.",cat:"health"},
+  {en:"Sneeze",zh:"打噴嚏",example:"Cover your mouth when you sneeze.",cat:"health"},
+  // MISSING FROM DOC — added
+  {en:"Whatcha (What are you)",zh:"你在做什麼？",example:"Whatcha doing tonight?",cat:"slang"},
+  {en:"Dead ass",zh:"非常認真，沒開玩笑",example:"Dead ass, that was the best meal I've ever had.",cat:"slang"},
+  {en:"I dig you",zh:"我喜歡你，我理解你",example:"I really dig your style.",cat:"slang"},
+  {en:"Bouncing off the walls",zh:"興奮過度，停不下來",example:"The kids were bouncing off the walls after the party.",cat:"emotion"},
+  {en:"Glabella",zh:"眉心（兩眉之間）",example:"The glabella is the area between your eyebrows.",cat:"health"},
+  {en:"Uvula",zh:"懸雍垂（吊鐘）",example:"The uvula hangs at the back of your throat.",cat:"health"},
+  {en:"Philtrum",zh:"人中（鼻下凹槽）",example:"The philtrum is the groove between the nose and upper lip.",cat:"health"},
+  {en:"Contusion",zh:"挫傷，瘀傷",example:"He had a contusion on his leg after the fall.",cat:"health"},
+  {en:"Internal Medicine",zh:"內科",example:"She was referred to the Internal Medicine department.",cat:"health"},
+  {en:"Surgery (department)",zh:"外科",example:"He works in the Surgery department.",cat:"health"},
+  {en:"Celtuce",zh:"萵筍（萵苣筍）",example:"Celtuce is popular in Chinese cooking.",cat:"food"},
+  {en:"Social pleasantries",zh:"社交寒暄，禮貌用語",example:"Using social pleasantries helps build rapport with people.",cat:"grammar"},
+
+  // ── FROM STUDY BOOKS 1–5 ──────────────────────────────
+  {en:"To have a bee in your bonnet",zh:"胡思亂想，腦中揮之不去的念頭",example:"She's got a bee in her bonnet about moving house.",cat:"idiom"},
+  {en:"A ray of sunshine",zh:"一縷陽光，帶來希望的人或事",example:"She's a real ray of sunshine on a gloomy day.",cat:"idiom"},
+  {en:"Nothing comes from nothing",zh:"無免費午餐，天下沒有白吃的午飯",example:"Nothing comes from nothing — you have to work for it.",cat:"idiom"},
+  {en:"Be there or be square",zh:"不見不散，一定要來",example:"The party starts at 8 — be there or be square!",cat:"idiom"},
+  {en:"Give me the runaround",zh:"讓人轉來轉去，故意拖延迴避",example:"Stop giving me the runaround and tell me the truth.",cat:"idiom"},
+  {en:"You're out of line",zh:"你太過分了，超越界線",example:"You're completely out of line saying that.",cat:"idiom"},
+  {en:"Come and go",zh:"變化不定，來來去去",example:"Trends come and go, but style is forever.",cat:"idiom"},
+  {en:"Ups and downs",zh:"起伏興衰，高低起落",example:"Every relationship has its ups and downs.",cat:"idiom"},
+  {en:"Night and day",zh:"日以繼夜，截然不同",example:"She works night and day to support her family.",cat:"idiom"},
+  {en:"Weal and woe",zh:"患難與共，福禍相依",example:"We share both weal and woe as true friends.",cat:"idiom"},
+  {en:"Once in a blue moon",zh:"千載難逢，極少發生",example:"He visits us once in a blue moon.",cat:"idiom"},
+  {en:"Fingers crossed",zh:"祝一切順利，祈求好運",example:"Fingers crossed you get the job!",cat:"idiom"},
+  {en:"Speak of the devil",zh:"說曹操曹操就到",example:"Speak of the devil — we were just talking about you!",cat:"idiom"},
+  {en:"In for a penny, in for a pound",zh:"一不做二不休，既然開始就做到底",example:"In for a penny, in for a pound — let's finish this.",cat:"idiom"},
+  {en:"A fish out of water",zh:"格格不入，人生路不熟",example:"I felt like a fish out of water at the formal dinner.",cat:"idiom"},
+  {en:"Over my dead body",zh:"想都別想，除非我死了",example:"You'll marry him over my dead body!",cat:"idiom"},
+  {en:"Don't ring a bell",zh:"不記得了，沒有印象",example:"That name doesn't ring a bell — do I know you?",cat:"idiom"},
+  {en:"Put yourself in my shoes",zh:"設身處地，換位思考",example:"Put yourself in my shoes and you'd understand.",cat:"idiom"},
+  {en:"Leave no stone unturned",zh:"竭盡全力，不放過任何機會",example:"We'll leave no stone unturned to find the truth.",cat:"idiom"},
+  {en:"Look on the bright side",zh:"凡事往好處看",example:"Look on the bright side — at least you're healthy.",cat:"idiom"},
+  {en:"A promise is a promise",zh:"一言既出，駟馬難追",example:"A promise is a promise — you can't back out now.",cat:"idiom"},
+  {en:"That makes two of us",zh:"我也是一樣，同病相憐",example:"I'm exhausted. That makes two of us!",cat:"idiom"},
+  {en:"It's on the house",zh:"免費招待，店家請客",example:"Your dessert is on the house tonight — enjoy!",cat:"idiom"},
+  {en:"Walk on eggshells",zh:"小心翼翼，如履薄冰",example:"I always walk on eggshells around him.",cat:"idiom"},
+  {en:"Jump the gun",zh:"草率行事，操之過急",example:"Don't jump the gun — wait until all facts are in.",cat:"idiom"},
+  {en:"It's now or never",zh:"機不可失，失不再來",example:"It's now or never — ask her out today!",cat:"idiom"},
+  {en:"Better safe than sorry",zh:"小心駛得萬年船，以防萬一",example:"Take an umbrella — better safe than sorry.",cat:"idiom"},
+  {en:"Play it by ear",zh:"見機行事，隨機應變",example:"I don't have plans — I'll just play it by ear.",cat:"idiom"},
+  {en:"Keep an eye on",zh:"留意，照看",example:"Can you keep an eye on my bag for a moment?",cat:"idiom"},
+  {en:"Turn a blind eye",zh:"假裝沒看見，睜一隻眼閉一隻眼",example:"The manager turned a blind eye to the misconduct.",cat:"idiom"},
+  {en:"Fall on deaf ears",zh:"被當耳邊風，無人理睬",example:"My warnings fell on deaf ears.",cat:"idiom"},
+  {en:"Pull someone's leg",zh:"開玩笑，捉弄人",example:"I'm only pulling your leg — relax!",cat:"idiom"},
+  {en:"The world is your oyster",zh:"世界任你馳騁，大展拳腳",example:"You're young and talented — the world is your oyster.",cat:"idiom"},
+  {en:"Every cloud has a silver lining",zh:"黑暗中總有一線曙光",example:"Don't give up — every cloud has a silver lining.",cat:"idiom"},
+  {en:"All good things must come to an end",zh:"天下無不散之筵席",example:"All good things must come to an end — goodbye!",cat:"idiom"},
+  {en:"No good deed goes unpunished",zh:"好心沒好報",example:"I helped and got blamed — no good deed goes unpunished!",cat:"idiom"},
+  {en:"Don't count your chickens before they hatch",zh:"事情未確定不要太樂觀",example:"Don't count your chickens before they hatch.",cat:"idiom"},
+  {en:"In a nutshell",zh:"簡而言之，一言以蔽之",example:"In a nutshell, we need to cut costs and work faster.",cat:"idiom"},
+  {en:"Go the extra mile",zh:"多走一步，額外付出",example:"She always goes the extra mile for her students.",cat:"idiom"},
+  {en:"Seize the day",zh:"把握今天，活在當下",example:"Don't wait — seize the day!",cat:"idiom"},
+  {en:"Carpe diem",zh:"把握當下，及時行樂（拉丁語）",example:"Carpe diem — live life to the fullest!",cat:"idiom"},
+  {en:"Never say never",zh:"凡事沒有絕對",example:"Never say never — things always change.",cat:"idiom"},
+  {en:"Everything comes to him who waits",zh:"功夫不負有心人，有志者事竟成",example:"Be patient — everything comes to him who waits.",cat:"idiom"},
+  {en:"Leap at the opportunity",zh:"抓緊機會，不要錯過",example:"When the chance came, she leapt at the opportunity.",cat:"idiom"},
+  {en:"Never too old to learn",zh:"活到老學到老",example:"You can always improve — never too old to learn.",cat:"idiom"},
+  {en:"Time will tell",zh:"時間會證明一切",example:"I'm not sure who's right, but time will tell.",cat:"idiom"},
+  {en:"Whaddya (What do you)",zh:"你想怎樣？（口語縮寫）",example:"Whaddya gonna do about it?",cat:"slang"},
+  {en:"Sorta (Sort of)",zh:"有點，有幾分（口語）",example:"I'm sorta tired today — long day at work.",cat:"slang"},
+  {en:"Outta (Out of)",zh:"沒有，離開（口語縮寫）",example:"I'm outta money — can you lend me some?",cat:"slang"},
+  {en:"Low key",zh:"低調，暗暗地",example:"I'm low key obsessed with this song right now.",cat:"slang"},
+  {en:"You feel me!",zh:"你懂我意思嗎！",example:"I just want to be respected, you feel me?",cat:"slang"},
+  {en:"Don't test me",zh:"別挑戰我，別試探我",example:"Don't test me — I mean every word I say.",cat:"slang"},
+  {en:"I'm all ears",zh:"我洗耳恭聽，專心在聽",example:"Tell me what happened — I'm all ears.",cat:"slang"},
+  {en:"I kid you not",zh:"我沒騙你，千真萬確",example:"I kid you not, it was the best meal ever.",cat:"slang"},
+  {en:"You're a sick man!",zh:"你很有才華！（口語誇獎）",example:"That trick shot was incredible — you're a sick man!",cat:"slang"},
+  {en:"No biggie",zh:"沒什麼大不了，不要緊",example:"Don't worry about the spill — no biggie!",cat:"slang"},
+  {en:"I'm so dead",zh:"我完蛋了！（誇張說法）",example:"If my mum finds out, I'm so dead.",cat:"slang"},
+  {en:"I'm gonna take off",zh:"我得先走了",example:"It's getting late — I'm gonna take off.",cat:"slang"},
+  {en:"Bite me",zh:"你管得著嗎（生氣語氣）",example:"If you don't like it, bite me!",cat:"slang"},
+  {en:"Douchebag / Scumbag",zh:"人渣，卑鄙小人",example:"Don't trust him — he's a total scumbag.",cat:"slang"},
+  {en:"Rain on me",zh:"向我傾訴，吐苦水",example:"I know you're struggling, so rain on me anytime.",cat:"slang"},
+  {en:"Slipped my mind",zh:"我忘了，一時忘記了",example:"Sorry I didn't call — it completely slipped my mind.",cat:"slang"},
+  {en:"I've got it covered",zh:"我可以搞掂，我負責",example:"Don't worry about dinner — I've got it covered.",cat:"slang"},
+  {en:"That's rich!",zh:"真是荒謬！（諷刺語氣）",example:"He calls me lazy? That's rich coming from him!",cat:"slang"},
+  {en:"Wicked good!",zh:"超級棒！（強烈誇獎）",example:"That concert was wicked good!",cat:"slang"},
+  {en:"Don't be salty",zh:"別那麼小氣，別惱羞成怒",example:"I beat you fair and square — don't be salty!",cat:"slang"},
+  {en:"You nailed it",zh:"你答對了，你做到了！",example:"That presentation was perfect — you nailed it!",cat:"slang"},
+  {en:"You never know",zh:"這很難說，誰知道呢",example:"You never know — you might win the lottery!",cat:"slang"},
+  {en:"I can't place you",zh:"我想不起在哪裡見過你",example:"You look familiar, but I can't place you.",cat:"slang"},
+  {en:"Take a rain check",zh:"改天再約，暫時婉拒",example:"I can't make dinner tonight — can I take a rain check?",cat:"slang"},
+  {en:"Are you nuts?",zh:"你瘋了嗎？",example:"Are you nuts? That's way too dangerous!",cat:"slang"},
+  {en:"Easy peasy",zh:"小菜一碟，輕而易舉",example:"The exam was easy peasy — I finished in 20 minutes.",cat:"slang"},
+  {en:"Holy moly!",zh:"我的天啊！（驚嘆語）",example:"Holy moly, that was an incredible performance!",cat:"slang"},
+  {en:"Do me a solid",zh:"幫我一個忙",example:"Can you do me a solid and cover my shift?",cat:"slang"},
+  {en:"Flip-flop",zh:"反覆無常，出爾反爾",example:"He keeps flip-flopping on his decision.",cat:"slang"},
+  {en:"Baloney",zh:"胡扯，瞎說",example:"That's a load of baloney — don't believe him.",cat:"slang"},
+  {en:"I second that",zh:"我支持，我同意這個提議",example:"Great idea — I second that!",cat:"slang"},
+  {en:"Play it cool",zh:"保持淡定，裝作冷靜",example:"Play it cool — don't let her see you nervous.",cat:"slang"},
+  {en:"Not too shabby",zh:"還不算太差，挺不錯的",example:"This restaurant is not too shabby at all!",cat:"slang"},
+  {en:"Bye Felicia!",zh:"慢走不送（對討厭的人說）",example:"You're leaving? Bye Felicia!",cat:"slang"},
+  {en:"Read the room",zh:"察言觀色，有眼力見",example:"Read the room — now is not the time for jokes.",cat:"slang"},
+  {en:"You're extra",zh:"你很搶眼，過於誇張",example:"Wearing a tuxedo to a picnic? You're so extra!",cat:"slang"},
+  {en:"Literally",zh:"真的，字面上（口語強調）",example:"I'm literally so tired I could sleep standing up.",cat:"slang"},
+  {en:"I'm green",zh:"我是新手，菜鳥",example:"Be patient with me — I'm still green at this job.",cat:"slang"},
+  {en:"On the ball",zh:"精明能幹，反應靈敏",example:"She's really on the ball — nothing gets past her.",cat:"slang"},
+  {en:"Go bananas",zh:"變得瘋狂或極度興奮",example:"The crowd went bananas when he scored.",cat:"slang"},
+  {en:"You're a lemon",zh:"無用的人或東西（笨蛋）",example:"That car is a total lemon — always breaking down.",cat:"slang"},
+  {en:"Five by five",zh:"一切正常，狀態良好（通訊用語）",example:"Engine check complete — five by five.",cat:"slang"},
+  {en:"Deep six",zh:"徹底放棄，丟棄不理",example:"We had to deep six the whole plan.",cat:"slang"},
+  {en:"Off the cuff",zh:"即興，不經思考脫口而出",example:"He gave a brilliant speech totally off the cuff.",cat:"slang"},
+  {en:"Cut me some slack",zh:"放我一馬，通融一些",example:"It's my first week — cut me some slack!",cat:"slang"},
+  {en:"Ten-four",zh:"收到（通訊用語），好！",example:"Ten-four, I'll be there in five minutes.",cat:"slang"},
+  {en:"Knock yourself out",zh:"隨便你，盡情去做吧",example:"Want the last slice of cake? Knock yourself out.",cat:"slang"},
+  {en:"Let it slide",zh:"忽略不計，算了吧",example:"He was rude, but I decided to let it slide.",cat:"slang"},
+  {en:"I'm out of here",zh:"我要走了",example:"This party is boring — I'm out of here.",cat:"slang"},
+  {en:"You crack me up",zh:"你笑死我了！",example:"Your impressions always crack me up.",cat:"slang"},
+  {en:"Don't get cocky",zh:"別太自大，別太得意",example:"You won once — don't get cocky about it.",cat:"slang"},
+  {en:"My bad!",zh:"我的錯，是我的問題",example:"Oh my bad — I totally forgot to tell you.",cat:"slang"},
+  {en:"Sounds good!",zh:"聽起來不錯！好的！",example:"Lunch at 1pm? Sounds good to me!",cat:"slang"},
+  {en:"Where can I find + noun?",zh:"哪裏可以找到…？（問路/問地點）",example:"Where can I find a pharmacy near here?",cat:"grammar"},
+  {en:"I don't have any … left",zh:"我沒有…了（表示用完）",example:"I don't have any money left — can you lend me some?",cat:"grammar"},
+  {en:"Do you know what I mean?",zh:"你懂我意思嗎？（確認對方理解）",example:"It's not about the money — do you know what I mean?",cat:"grammar"},
+  {en:"I hardly ever + verb",zh:"我很少…（表示極少做某事）",example:"I hardly ever drink coffee anymore.",cat:"grammar"},
+  {en:"If it were up to me",zh:"如果由我決定的話…",example:"If it were up to me, I'd choose the seaside location.",cat:"grammar"},
+  {en:"How was + noun?",zh:"…怎麼樣？（詢問體驗或感受）",example:"How was the movie? Did you enjoy it?",cat:"grammar"},
+  {en:"Make it / Make sure / Make out",zh:"make的多種常用法",example:"Make sure you lock the door before leaving.",cat:"grammar"},
+  {en:"Put on / Put off / Put up with",zh:"put的常用片語動詞",example:"I really can't put up with this noise any longer.",cat:"grammar"},
+  {en:"Get dressed / Get ready / Get lost",zh:"get的多種常用法",example:"Get ready — we're leaving in ten minutes.",cat:"grammar"},
+  {en:"Listen vs Hear vs Attend vs Overhear",zh:"聆聽四個英語動詞的分別",example:"I accidentally overheard their conversation.",cat:"grammar"},
+  {en:"Time expressions: in time / on time",zh:"及時(in time)與準時(on time)的分別",example:"She arrived just in time to catch the last train.",cat:"grammar"},
+  {en:"Firefly",zh:"螢火蟲",example:"We watched fireflies glow in the summer night.",cat:"vocab"},
+  {en:"Mentality",zh:"心態，心理狀態",example:"You need a winning mentality to succeed in life.",cat:"vocab"},
+  {en:"Physique",zh:"體格，體型",example:"Athletes train hard to maintain their physique.",cat:"vocab"},
+  {en:"Upbringing",zh:"成長環境，教養背景",example:"Her upbringing shaped who she is today.",cat:"vocab"},
+  {en:"Serendipity",zh:"緣份，意外的好運",example:"Meeting her was pure serendipity.",cat:"vocab"},
+  {en:"Mysophobia",zh:"潔癖，對細菌污垢的恐懼",example:"His mysophobia makes him wash his hands constantly.",cat:"vocab"},
+  {en:"Bluff / Bluffing",zh:"虛張聲勢，詐唬（如撲克牌）",example:"He was bluffing — he had terrible cards.",cat:"vocab"},
+  {en:"Melodrama",zh:"誇張煽情，情節劇",example:"Don't be so melodramatic — it's not that bad.",cat:"vocab"},
+  {en:"Buzzword",zh:"時髦用語，流行詞彙",example:"Sustainability has become a major business buzzword.",cat:"vocab"},
+  {en:"Foreword",zh:"前言，序言（書的開頭）",example:"She wrote the foreword to his debut novel.",cat:"vocab"},
+  {en:"Watchword",zh:"口號，座右銘",example:"Precision and care are our watchwords.",cat:"vocab"},
+  {en:"Snapping up",zh:"搶購，迅速搶走",example:"People were snapping up the sale items quickly.",cat:"vocab"},
+  {en:"Seasick / Airsick / Carsick",zh:"暈船／暈機／暈車",example:"I got terribly seasick on the ferry ride.",cat:"vocab"},
+  {en:"Homesick",zh:"思鄉，想家",example:"She felt homesick during her first week abroad.",cat:"vocab"},
+  {en:"Lovesick",zh:"相思，因思念愛人而痛苦",example:"He's been lovesick since she moved away.",cat:"vocab"},
+  {en:"Litchi",zh:"荔枝",example:"Fresh litchi is sweet, juicy and delicious.",cat:"food"},
+  {en:"Haw / Hawthorn",zh:"山楂",example:"Haw berries are used in traditional Chinese medicine.",cat:"food"},
+  {en:"Medlar",zh:"枸杞（歐楂）",example:"Medlar fruits are often used in herbal teas.",cat:"food"},
+  {en:"Scallion",zh:"葱，青葱",example:"Add scallions to the soup for extra flavour.",cat:"food"},
+  {en:"Red Cabbage",zh:"紫甘藍",example:"Red cabbage is great in salads and coleslaw.",cat:"food"},
+  {en:"Watercress",zh:"西洋菜",example:"Watercress soup is popular in Cantonese cooking.",cat:"food"},
+  {en:"Kale",zh:"羽衣甘藍",example:"Kale is packed with vitamins and antioxidants.",cat:"food"},
+  {en:"Water Spinach",zh:"空心菜（通菜）",example:"Water spinach stir-fried with garlic is delicious.",cat:"food"},
+  {en:"Swiss Chard",zh:"瑞士甜菜",example:"Swiss chard has a mild earthy flavour.",cat:"food"},
+  {en:"Snow Peas",zh:"荷蘭豆",example:"Snow peas are crisp and sweet in stir-fries.",cat:"food"},
+  {en:"Radish",zh:"蘿蔔",example:"White radish is used in many Asian dishes.",cat:"food"},
+  {en:"Luffa",zh:"絲瓜",example:"Luffa is a popular vegetable in summer soups.",cat:"food"},
+  {en:"Parsley",zh:"歐芹",example:"Sprinkle chopped parsley over the pasta.",cat:"food"},
+  {en:"Thyme",zh:"百里香",example:"Thyme gives roasted chicken a wonderful aroma.",cat:"food"},
+  {en:"Arugula",zh:"芝麻菜（火箭菜）",example:"Arugula has a peppery, slightly bitter taste.",cat:"food"},
+  {en:"Bitter Melon",zh:"苦瓜",example:"Bitter melon is good for blood sugar control.",cat:"food"},
+  {en:"Expired",zh:"過期的",example:"Don't eat that — it's well past expired.",cat:"food"},
+  {en:"Moldy",zh:"發霉的",example:"The bread has gone moldy — throw it away.",cat:"food"},
+  {en:"Overripe",zh:"過熟的，爛熟的",example:"The bananas are overripe but perfect for baking.",cat:"food"},
+  {en:"Nosebleed",zh:"鼻血，鼻出血",example:"He got a nosebleed from the dry air.",cat:"health"},
+  {en:"Concussion",zh:"腦震盪",example:"He suffered a concussion after the fall.",cat:"health"},
+  {en:"Cramp",zh:"抽筋",example:"She got a cramp in her leg during the race.",cat:"health"},
+  {en:"Blister",zh:"水泡",example:"New shoes gave me blisters on my heels.",cat:"health"},
+  {en:"Laceration",zh:"撕裂傷，傷口",example:"The laceration required three stitches to close.",cat:"health"},
+  {en:"Abrasion",zh:"擦傷，磨損傷",example:"He had minor abrasions on both elbows.",cat:"health"},
+  {en:"Scald",zh:"燙傷",example:"She scalded her hand on the hot kettle.",cat:"health"},
+  {en:"Fainting",zh:"昏厥，暈倒",example:"She fainted from the heat at the outdoor concert.",cat:"health"},
+  {en:"Diagnosis",zh:"診斷",example:"The doctor gave her a diagnosis of mild anaemia.",cat:"health"},
+  {en:"Symptom",zh:"症狀，徵兆",example:"Fever and cough are common symptoms of flu.",cat:"health"},
+  {en:"Anesthesia",zh:"麻醉，麻木",example:"She was under general anesthesia during surgery.",cat:"health"},
+  {en:"Transfusion",zh:"輸血",example:"He received a blood transfusion after the accident.",cat:"health"},
+  {en:"Rehabilitation",zh:"康復治療",example:"Physical rehabilitation helped him walk again.",cat:"health"},
+  {en:"Urology",zh:"泌尿科",example:"He was referred to the Urology department.",cat:"health"},
+  {en:"Paediatrics",zh:"兒科",example:"The hospital has an excellent Paediatrics ward.",cat:"health"},
+  {en:"Gynaecology",zh:"婦科",example:"Regular Gynaecology check-ups are very important.",cat:"health"},
+  {en:"Obstetrics",zh:"產科",example:"She works in the Obstetrics and Maternity unit.",cat:"health"},
+  {en:"Orthopedics",zh:"骨科，矯形外科",example:"He had knee surgery in the Orthopedics department.",cat:"health"},
+  {en:"Otolaryngology (ENT)",zh:"耳鼻喉科",example:"She saw an ENT specialist for her ear problem.",cat:"health"},
+  {en:"Andrology",zh:"男科（泌尿生殖外科）",example:"Andrology focuses on male reproductive health.",cat:"health"},
+  {en:"Edema",zh:"水腫",example:"Edema in the legs can signal heart problems.",cat:"health"},
+  {en:"Constipation",zh:"便秘",example:"Drink more water and eat fibre to prevent constipation.",cat:"health"},
+  {en:"Tinnitus",zh:"耳鳴",example:"He has been suffering from tinnitus for months.",cat:"health"},
+  {en:"Inflammation",zh:"發炎",example:"Inflammation is the body's natural response to injury.",cat:"health"},
+  {en:"Sore throat",zh:"喉嚨痛",example:"I have a sore throat and a slight fever.",cat:"health"},
+  {en:"Lunula",zh:"月牙（指甲根部白色半月形）",example:"The lunula is the white crescent at the nail's base.",cat:"health"},
+  {en:"Tragus",zh:"耳屏（耳朵前面的小突起）",example:"She got her tragus pierced last week.",cat:"health"},
+  {en:"Nape",zh:"後頸",example:"She felt a chill on the nape of her neck.",cat:"health"},
+  {en:"Caruncle",zh:"淚阜（眼角粉紅小肉塊）",example:"The caruncle is the small pink structure at the eye corner.",cat:"health"},
+  {en:"Rasceta",zh:"腕線（手腕內側的紋路）",example:"The rasceta are the lines on the inside of your wrist.",cat:"health"},
+  {en:"Frenulum",zh:"舌繫帶",example:"A tight frenulum can affect speech in young children.",cat:"health"},
+  {en:"Steroid",zh:"類固醇",example:"He was prescribed a short course of steroids.",cat:"health"},
+  {en:"I adore you",zh:"我超喜歡你，我非常愛你",example:"I adore you — you make every day so much brighter.",cat:"emotion"},
+  {en:"Hang in there",zh:"撐持下去，堅持住",example:"Things will get better soon — hang in there!",cat:"emotion"},
+  {en:"You inspire me",zh:"你鼓舞了我，你激勵著我",example:"Your courage and kindness truly inspire me.",cat:"emotion"},
+  {en:"I'm moving on",zh:"我正重新開始，向前看",example:"It was tough, but I'm moving on now.",cat:"emotion"},
+  {en:"I'm done with you",zh:"我受夠你了",example:"You lied to me twice — I'm done with you.",cat:"emotion"},
+  {en:"Never let go",zh:"堅持不懈，永不放手",example:"Never let go of the people and dreams you love.",cat:"emotion"},
+  {en:"I have faith in you",zh:"我對你有信心，我相信你",example:"Don't give up — I have complete faith in you.",cat:"emotion"},
+  {en:"Always have, always will",zh:"始終如一，始終愛你",example:"Always have, always will — I'll always be here.",cat:"emotion"},
+  {en:"I'm on your side",zh:"我支持你，我站在你這邊",example:"No matter what happens, I'm on your side.",cat:"emotion"},
+  {en:"You got this",zh:"你能行，你一定可以的",example:"The exam is tomorrow — you got this!",cat:"emotion"},
+
+];
+
+// ═══════════════════════════════════════════════
+// PERSISTENT STORAGE — custom words survive refresh
+// ═══════════════════════════════════════════════
+function loadCustom() {
+  try { return JSON.parse(localStorage.getItem('cc_custom') || '[]'); } catch(e) { return []; }
+}
+function saveCustom(arr) {
+  try { localStorage.setItem('cc_custom', JSON.stringify(arr)); } catch(e) {}
+}
+function loadStreak() {
+  try {
+    const s = JSON.parse(localStorage.getItem('cc_streak') || '{}');
+    const today = dateStr();
+    if (s.last === today) return s.count || 1;
+    if (s.last === yesterday()) { const c = (s.count||0)+1; saveStreak(c); return c; }
+    saveStreak(1); return 1;
+  } catch(e) { return 1; }
+}
+function saveStreak(n) {
+  try { localStorage.setItem('cc_streak', JSON.stringify({last: dateStr(), count: n})); } catch(e) {}
+}
+function dateStr() { return new Date().toISOString().slice(0,10); }
+function yesterday() { const d = new Date(); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); }
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let customWords = loadCustom();
+let todayIdx = 0;
+let swipeCat = 'all';
+let swipeDeck = [];
+let swipeIdx = 0;
+let reviewCat = 'all';
+let scoreOk = 0, scoreAll = 0;
+let testAnswered = false, curQ = null;
+let deferredPrompt = null;
+
+const CAT = {idiom:'慣用語',slang:'俚語',phrasal:'片語',grammar:'語法',vocab:'詞彙',food:'食物',emotion:'情感',health:'健康',custom:'我的詞彙'};
+
+function allData() { return [...SEED, ...customWords]; }
+function getBycat(cat) {
+  if (cat === 'all') return allData();
+  if (cat === 'custom') return customWords;
+  return SEED.filter(d => d.cat === cat);
+}
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+function showTab(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'swipe') initSwipe();
+  if (name === 'review') renderReview();
+  if (name === 'test') { if (!curQ) genQ(); }
+  if (name === 'add') renderCustomList();
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════
+// TODAY
+// ═══════════════════════════════════════════════
+function renderToday() {
+  const all = allData();
+  const d = all[todayIdx % all.length];
+  document.getElementById('tc-en').textContent = d.en;
+  document.getElementById('tc-zh').textContent = d.zh;
+  document.getElementById('tc-ex').textContent = d.example || '';
+  document.getElementById('tc-tag').textContent = (CAT[d.cat] || d.cat).toUpperCase();
+  // date
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('today-date').textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()];
+}
+function nextToday() { todayIdx = (todayIdx + 1) % allData().length; renderToday(); }
+function prevToday() { todayIdx = (todayIdx - 1 + allData().length) % allData().length; renderToday(); }
+function speakToday() { const d = allData()[todayIdx % allData().length]; speak(d.en); }
+
+function updateStats() {
+  const streak = loadStreak();
+  document.getElementById('streak-num').textContent = streak;
+  document.getElementById('stat-streak2').textContent = streak;
+  document.getElementById('stat-total').textContent = allData().length;
+  document.getElementById('stat-custom').textContent = customWords.length;
+  document.getElementById('custom-count').textContent = customWords.length;
+}
+
+// ═══════════════════════════════════════════════
+// SWIPE CARDS — fast, no display:none toggle
+// ═══════════════════════════════════════════════
+function initSwipe() {
+  swipeDeck = shuffle([...getBycat(swipeCat)]);
+  swipeIdx = 0;
+  document.getElementById('flip-card').classList.remove('flipped');
+  document.getElementById('sc-done').textContent = '0';
+  document.getElementById('sc-total').textContent = swipeDeck.length;
+  renderCard();
+  renderDots();
+}
+
+function renderCard() {
+  if (!swipeDeck.length) return;
+  const d = swipeDeck[swipeIdx];
+  const label = CAT[d.cat] || d.cat;
+  const num = (swipeIdx+1) + ' / ' + swipeDeck.length;
+  // Update both faces simultaneously
+  document.getElementById('fc-en').textContent = d.en;
+  document.getElementById('fc-zh').textContent = d.zh;
+  document.getElementById('fc-ex').textContent = d.example || '';
+  document.getElementById('fc-pill').textContent = label;
+  document.getElementById('fc-counter').textContent = num;
+  document.getElementById('fc-counter2').textContent = num;
+  document.getElementById('fc-cat').textContent = label;
+  document.getElementById('fc-cat2').textContent = label;
+}
+
+function flipCard() {
+  document.getElementById('flip-card').classList.toggle('flipped');
+}
+
+function doSwipe(dir) {
+  const card = document.getElementById('flip-card');
+  const tx = dir === 'right' ? '110%' : '-110%';
+  // Animate the whole card out
+  card.style.transition = 'transform 0.22s ease-in, opacity 0.22s ease-in';
+  card.style.transform = `translateX(${tx}) rotate(${dir==='right'?10:-10}deg)`;
+  card.style.opacity = '0';
+
+  setTimeout(() => {
+    // Reset without transition
+    card.style.transition = 'none';
+    card.style.transform = 'translateX(0)';
+    card.style.opacity = '1';
+    card.classList.remove('flipped');
+
+    if (swipeIdx >= swipeDeck.length - 1) {
+      swipeIdx = 0; shuffle(swipeDeck);
+    } else {
+      swipeIdx++;
+    }
+    document.getElementById('sc-done').textContent = swipeIdx;
+    renderCard();
+    renderDots();
+
+    // Re-enable CSS transitions after paint
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      card.style.transition = '';
+      card.style.transform = '';
+    }));
+  }, 210);
+}
+
+function speakCurrent() { if (swipeDeck[swipeIdx]) speak(swipeDeck[swipeIdx].en); }
+
+function setSwipeCat(cat, btn) {
+  swipeCat = cat;
+  document.querySelectorAll('#swipe-pills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  initSwipe();
+}
+
+function renderDots() {
+  const n = Math.min(swipeDeck.length, 14);
+  const el = document.getElementById('pdots');
+  el.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (i < swipeIdx ? ' done' : (i === swipeIdx ? ' cur' : ''));
+    el.appendChild(d);
+  }
+}
+
+// Touch swipe
+let tx0 = 0, ty0 = 0, dragging = false;
+const fc = document.getElementById('flip-card');
+fc.addEventListener('touchstart', e => {
+  tx0 = e.touches[0].clientX; ty0 = e.touches[0].clientY; dragging = true;
+}, {passive:true});
+fc.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  const dx = e.touches[0].clientX - tx0;
+  const dy = e.touches[0].clientY - ty0;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+    fc.style.transition = 'none';
+    fc.style.transform = `translateX(${dx}px) rotate(${dx/22}deg)`;
+    document.getElementById('ov-l').style.opacity = dx < -15 ? Math.min(1,(Math.abs(dx)-15)/70) : 0;
+    document.getElementById('ov-r').style.opacity = dx > 15 ? Math.min(1,(dx-15)/70) : 0;
+  }
+}, {passive:true});
+fc.addEventListener('touchend', e => {
+  if (!dragging) return; dragging = false;
+  const dx = e.changedTouches[0].clientX - tx0;
+  const dy = e.changedTouches[0].clientY - ty0;
+  fc.style.transition = '';
+  fc.style.transform = '';
+  document.getElementById('ov-l').style.opacity = 0;
+  document.getElementById('ov-r').style.opacity = 0;
+  if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
+    doSwipe(dx > 0 ? 'right' : 'left');
+  } else if (Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+    flipCard();
+  }
+});
+
+// ═══════════════════════════════════════════════
+// REVIEW
+// ═══════════════════════════════════════════════
+function renderReview() {
+  const q = document.getElementById('review-search').value.toLowerCase();
+  let data = getBycat(reviewCat);
+  if (q) data = data.filter(d => d.en.toLowerCase().includes(q) || d.zh.includes(q));
+  const el = document.getElementById('review-list');
+  if (!data.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">找不到結果</div></div>'; return; }
+  el.innerHTML = data.map((d,i) => `
+    <div class="review-row ${d.custom?'custom':''}" onclick="speak('${esc(d.en)}')">
+      <div class="rev-num">${i+1}</div>
+      <div class="rev-body">
+        <div class="rev-en">${d.en}</div>
+        <div class="rev-zh">${d.zh}</div>
+        ${d.example ? `<div class="rev-ex">${d.example}</div>` : ''}
+        <div class="rev-tag">${CAT[d.cat]||d.cat}</div>
+      </div>
+      <button class="rev-audio" onclick="event.stopPropagation();speak('${esc(d.en)}')">🔊</button>
+    </div>`).join('');
+}
+
+function setReviewCat(cat, btn) {
+  reviewCat = cat;
+  document.querySelectorAll('#review-pills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderReview();
+}
+
+function filterReview() { renderReview(); }
+
+// ═══════════════════════════════════════════════
+// TEST
+// ═══════════════════════════════════════════════
+function genQ() {
+  testAnswered = false;
+  const pool = allData();
+  curQ = pool[Math.floor(Math.random()*pool.length)];
+  let wrong = [];
+  while (wrong.length < 3) {
+    const r = pool[Math.floor(Math.random()*pool.length)];
+    if (r !== curQ && !wrong.includes(r)) wrong.push(r);
+  }
+  const opts = shuffle([curQ, ...wrong]);
+  document.getElementById('qt-word').textContent = curQ.en;
+  document.getElementById('qt-ex').textContent = curQ.example || '';
+  document.getElementById('qt-res').textContent = '';
+  document.getElementById('qt-res').className = 'q-result';
+  document.getElementById('qt-explain').textContent = '';
+  document.getElementById('qt-next').className = 'q-next';
+  document.getElementById('qt-opts').innerHTML = opts.map(o =>
+    `<button class="q-opt" onclick="answerQ(this,'${esc(o.en)}')">${o.zh}</button>`).join('');
+}
+
+function answerQ(btn, en) {
+  if (testAnswered) return;
+  testAnswered = true;
+  scoreAll++;
+  document.getElementById('sc-all').textContent = scoreAll;
+  const ok = en === curQ.en;
+  if (ok) {
+    btn.classList.add('correct');
+    scoreOk++;
+    document.getElementById('sc-ok').textContent = scoreOk;
+    document.getElementById('qt-res').textContent = '✅ 答對了！Correct!';
+    document.getElementById('qt-res').className = 'q-result ok';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.q-opt').forEach(b => {
+      if (b.textContent === curQ.zh) b.classList.add('correct');
+    });
+    document.getElementById('qt-res').textContent = '❌ 答錯了！';
+    document.getElementById('qt-res').className = 'q-result no';
+    document.getElementById('qt-explain').textContent = '正確答案：' + curQ.zh;
+  }
+  document.querySelectorAll('.q-opt').forEach(b => b.disabled = true);
+  speak(curQ.en);
+  document.getElementById('qt-next').className = 'q-next show';
+}
+
+function nextQ() { genQ(); }
+
+// ═══════════════════════════════════════════════
+// ADD WORD — saves to localStorage permanently
+// ═══════════════════════════════════════════════
+function saveWord() {
+  const en = document.getElementById('add-en').value.trim();
+  const zh = document.getElementById('add-zh').value.trim();
+  const ex = document.getElementById('add-ex').value.trim();
+  const cat = document.getElementById('add-cat').value;
+  if (!en || !zh) { alert('請填寫英文詞彙和中文解釋 Please fill in English and Chinese fields.'); return; }
+  const word = {en, zh, example: ex, cat, custom: true, id: Date.now()};
+  customWords.unshift(word);
+  saveCustom(customWords);
+  document.getElementById('add-en').value = '';
+  document.getElementById('add-zh').value = '';
+  document.getElementById('add-ex').value = '';
+  document.getElementById('add-cat').value = 'custom';
+  renderCustomList();
+  updateStats();
+  // Show success
+  const btn = document.querySelector('#screen-add .btn-save');
+  btn.textContent = '✓ 已儲存！Saved!';
+  btn.style.background = 'var(--green3)';
+  setTimeout(() => { btn.textContent = '儲存 Save ✓'; btn.style.background = ''; }, 1800);
+}
+
+function deleteWord(id) {
+  customWords = customWords.filter(w => w.id !== id);
+  saveCustom(customWords);
+  renderCustomList();
+  updateStats();
+}
+
+function renderCustomList() {
+  document.getElementById('custom-count').textContent = customWords.length;
+  const el = document.getElementById('custom-list');
+  if (!customWords.length) {
+    el.innerHTML = '<div class="empty" style="padding:28px 0"><div class="empty-icon">📝</div><div class="empty-text" style="font-size:15px">尚未新增詞彙</div></div>';
+    return;
+  }
+  el.innerHTML = customWords.map(w => `
+    <div class="review-row custom">
+      <div class="rev-num">★</div>
+      <div class="rev-body">
+        <div class="rev-en">${w.en}</div>
+        <div class="rev-zh">${w.zh}</div>
+        ${w.example ? `<div class="rev-ex">${w.example}</div>` : ''}
+        <div class="rev-tag">${CAT[w.cat]||w.cat}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+        <button class="rev-audio" onclick="speak('${esc(w.en)}')">🔊</button>
+        <button class="rev-audio" onclick="deleteWord(${w.id})" style="font-size:17px;color:var(--red)">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SPEECH
+// ═══════════════════════════════════════════════
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-GB'; u.rate = 0.88; u.pitch = 1;
+  const vs = speechSynthesis.getVoices();
+  const v = vs.find(v => v.lang === 'en-GB') || vs.find(v => v.lang.startsWith('en'));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function shuffle(a) { for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+// ═══════════════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('install-banner').classList.remove('show'); });
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+renderToday();
+updateStats();
+initSwipe();
+genQ();
+renderCustomList();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
