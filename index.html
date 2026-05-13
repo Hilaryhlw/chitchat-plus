@@ -509,6 +509,42 @@ body {
 /* ── SCROLLBAR HIDE ── */
 .screen::-webkit-scrollbar { display: none; }
 .screen { scrollbar-width: none; }
+
+/* ── EXPORT / IMPORT ── */
+.io-section {
+  background: var(--white);
+  border-radius: var(--r2);
+  padding: 20px 18px;
+  box-shadow: var(--shadow2);
+  margin-top: 24px;
+}
+.io-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--green3); margin-bottom: 14px;
+}
+.io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.io-btn {
+  padding: 13px 8px;
+  border: none; border-radius: var(--r);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Serif TC', serif;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; transition: opacity 0.15s;
+}
+.io-btn:active { opacity: 0.75; }
+.io-btn-json-export { background: var(--green); color: #fff; }
+.io-btn-json-import { background: var(--green-mist); color: var(--green3); border: 1.5px solid var(--green-pale); }
+.io-btn-pdf { background: var(--accent); color: #fff; grid-column: span 2; }
+.io-note { font-size: 12px; color: var(--muted2); margin-top: 10px; line-height: 1.6; }
+.io-msg {
+  margin-top: 10px; padding: 9px 14px;
+  border-radius: var(--r); font-size: 13px; font-weight: 700;
+  display: none;
+}
+.io-msg.ok { display:block; background: var(--green-mist); color: var(--green3); }
+.io-msg.err { display:block; background: #fde8e8; color: var(--red); }
 </style>
 </head>
 <body>
@@ -730,6 +766,22 @@ body {
   <div style="margin-top:24px;">
     <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green3);margin-bottom:12px;">我的詞彙 My Words (<span id="custom-count">0</span>)</div>
     <div class="review-list" id="custom-list"></div>
+  </div>
+
+  <!-- EXPORT / IMPORT -->
+  <div class="io-section">
+    <div class="io-title">📤 匯出 / 匯入 Export &amp; Import</div>
+    <div class="io-grid">
+      <button class="io-btn io-btn-json-export" onclick="exportJSON()">💾 Export JSON</button>
+      <button class="io-btn io-btn-json-import" onclick="document.getElementById('import-file').click()">📂 Import JSON</button>
+      <button class="io-btn io-btn-pdf" onclick="exportPDF()">📄 Export PDF（我的詞彙）</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(event)">
+    <div class="io-note">
+      💡 Export JSON 可備份所有自訂詞彙，換裝置時 Import 回來即可還原。<br>
+      Export PDF 會把你的詞彙整理成可列印的 PDF 檔案。
+    </div>
+    <div class="io-msg" id="io-msg"></div>
   </div>
 </div>
 </div>
@@ -1072,7 +1124,7 @@ function yesterday() { const d = new Date(); d.setDate(d.getDate()-1); return d.
 // STATE
 // ═══════════════════════════════════════════════
 let customWords = loadCustom();
-let todayIdx = 0;
+let todayIdx = Math.floor(Math.random() * (SEED.length + (loadCustom().length || 0)));
 let swipeCat = 'all';
 let swipeDeck = [];
 let swipeIdx = 0;
@@ -1386,6 +1438,111 @@ function renderCustomList() {
         <button class="rev-audio" onclick="deleteWord(${w.id})" style="font-size:17px;color:var(--red)">🗑</button>
       </div>
     </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════
+function showIOMsg(msg, type) {
+  const el = document.getElementById('io-msg');
+  el.textContent = msg;
+  el.className = 'io-msg ' + type;
+  setTimeout(() => { el.className = 'io-msg'; }, 3500);
+}
+
+function exportJSON() {
+  if (!customWords.length) { showIOMsg('⚠️ 尚無自訂詞彙可匯出', 'err'); return; }
+  const data = JSON.stringify({version:1, exported: new Date().toISOString(), words: customWords}, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'chitchat-words-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showIOMsg('✅ JSON 已匯出！Export successful!', 'ok');
+}
+
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const obj = JSON.parse(ev.target.result);
+      // Accept plain array or {words:[...]} envelope
+      const incoming = Array.isArray(obj) ? obj : (Array.isArray(obj.words) ? obj.words : null);
+      if (!incoming) throw new Error('格式不正確');
+      // Merge: avoid duplicates by id
+      const existingIds = new Set(customWords.map(w => w.id));
+      let added = 0;
+      incoming.forEach(w => {
+        if (w.en && w.zh) {
+          if (!w.id) w.id = Date.now() + Math.random();
+          if (!existingIds.has(w.id)) {
+            w.custom = true;
+            customWords.unshift(w);
+            existingIds.add(w.id);
+            added++;
+          }
+        }
+      });
+      saveCustom(customWords);
+      renderCustomList();
+      updateStats();
+      showIOMsg('✅ 成功匯入 ' + added + ' 個詞彙！Imported ' + added + ' words!', 'ok');
+    } catch(err) {
+      showIOMsg('❌ 檔案格式有誤，請使用本 App 匯出的 JSON 檔', 'err');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function exportPDF() {
+  if (!customWords.length) { showIOMsg('⚠️ 尚無自訂詞彙可匯出', 'err'); return; }
+
+  const rows = customWords.map((w, i) => `
+    <tr>
+      <td style="width:24px;color:#7a7060;font-size:11px;padding:8px 4px 8px 0;vertical-align:top;">${i+1}</td>
+      <td style="padding:8px 12px 8px 0;border-bottom:1px solid #e2d9c8;vertical-align:top;">
+        <div style="font-size:15px;font-weight:700;color:#3a3020;">${w.en}</div>
+        <div style="font-size:13px;color:#4a7a52;margin-top:2px;">${w.zh}</div>
+        ${w.example ? `<div style="font-size:12px;color:#7a7060;font-style:italic;margin-top:3px;">${w.example}</div>` : ''}
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #e2d9c8;vertical-align:top;white-space:nowrap;">
+        <span style="font-size:10px;background:#eaf2eb;color:#3a6142;padding:2px 8px;border-radius:999px;">${CAT[w.cat]||w.cat}</span>
+      </td>
+    </tr>`).join('');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Chitchat+ 我的詞彙</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Noto+Serif+TC&display=swap');
+    body{font-family:'Noto Serif TC',serif;margin:0;padding:32px 40px;background:#f5f0e8;color:#3a3020;}
+    h1{font-family:'Playfair Display',serif;font-size:28px;color:#3a6142;margin:0 0 4px;}
+    .sub{font-size:13px;color:#7a7060;margin-bottom:24px;}
+    table{width:100%;border-collapse:collapse;}
+    @media print{body{background:#fff;padding:20px 28px;}}
+  </style></head><body>
+  <h1>Chitchat+ 我的詞彙</h1>
+  <div class="sub">匯出日期 Exported: ${new Date().toLocaleDateString('zh-HK')} · 共 ${customWords.length} 個詞彙</div>
+  <table>${rows}</table>
+  </body></html>`;
+
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if (win) {
+    win.onload = function() {
+      setTimeout(() => { win.print(); }, 400);
+    };
+    showIOMsg('✅ PDF 視窗已開啟，請選擇「另存為 PDF」', 'ok');
+  } else {
+    // Fallback: download the HTML file
+    const a = document.createElement('a');
+    a.href = url; a.download = 'chitchat-words-' + new Date().toISOString().slice(0,10) + '.html';
+    a.click();
+    showIOMsg('✅ 已下載 HTML 檔，請用瀏覽器開啟後列印為 PDF', 'ok');
+  }
 }
 
 // ═══════════════════════════════════════════════
